@@ -1,0 +1,106 @@
+@startuml "Diagramme de classes : Modèle du domaine"
+
+left to right direction
+
+package "main" <<Rectangle>>{
+    class SortFile
+}
+
+package "model" <<Rectangle>>{
+    class Directory
+    class FileOrDirectory
+    class SimpleFile
+    enum Type
+    enum Correspondance
+}
+
+FileOrDirectory "1" <|-- "0..1" Directory : extends
+FileOrDirectory "1" <|-- "0..1" SimpleFile : extends
+SortFile -- "2..*" FileOrDirectory : trie >
+
+class SortFile {
+    +copy4(content : File, path : String) : FileOrDirectory
+    +copy3(content : File[], path : String, count : int, parent : Directory)
+    +copy2(f : File[], path : String, i : int, parent : Directory)
+    +copy1(f : File, path : String)
+    +main(args : String[])
+}
+
+class Directory {
+    -child : List<FileOrDirectory>
+    +Directory(path : String, name : String, date : Date, size : int, parent : Directory)
+    +getChild() : List<FileOrDirectory>
+    +toString(i : int) : String
+    +toString() : String
+    +updateSize() : int
+    -getFirstFile2(d : Directory) : SimpleFile
+    +getFirstFile() : SimpleFile
+    -getFileState(f : SimpleFile, tmp : SimpleFile)
+    -putState(toCompare : Directory, compareWith : Directory, state[] : int)
+    -increment(fod : FileOrDirectory, stqte[] : int)
+    -checkState(toCompare : Directory, state[] : int)
+    -getDirectoryState(toCompare : Directory, compareWith : Directory)
+    -compareDirectory(toCompare : Directory, compareWith : Directory)
+    -compareWith3(toCompare : Directory, compareWith : Directory)
+    -compareFile(f : SimpleFile, c : Directory)
+    -compareWith2(c : Directory)
+    +compareWith(c : Directory)
+}
+
+abstract class FileOrDirectory {
+    #type : Type
+    #path : String
+    #name : String
+    #date : Date
+    #size : Integer
+    #parent : Directory
+    #corresp : Correspondance
+    +getName() : String
+    +setName(name : String)
+    +getPath() : String
+    +addPath(path : String)
+    +getType() : String
+    +getSize() : int
+    +setSize(size : int)
+    +getDate() : Date
+    +updateDate()
+    +getParent() : Directory
+    +setParent(p : Directory)
+    +getCorresp() : Correspondance
+    +getLastParent() : Directory
+    #setCorresp(c : Correspondance)
+    +getNbParent() : int
+    +{abstract}getChild() : List<FileOrDirectory>
+    +isSimpleFile() : boolean
+    +isDirectory() : boolean
+    +areEquals(fod : FileOrDirectory) : boolean
+    +{abstract}updateSize() : int
+    +{abstract}toString() : String
+    #addTab(i : int) : String
+    +{abstract}compareWith(d : Directory)
+    #rebootState(fod : FileOrDirectory)
+}
+
+class SimpleFile {
+    +SimpleFile(path : String, name : String, date : Date, size : int, parent : Directory)
+    +getChild() : List<FileORDirectory>
+    +compareWith(c : Directory)
+    +toString() : String
+    +toString(i : int) : String
+    +updateSize() : int
+}
+
+enum Type {
+    F
+    D
+}
+
+enum Correspondance {
+    SAME
+    PARTIAL_SAME
+    NEWER
+    OLDER
+    ORPHAN
+}
+
+@enduml
